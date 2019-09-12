@@ -139,3 +139,49 @@ Inherent extrinsic knowledge is again somewhat generic, and the actual construct
 
 * Audit
 
+# 5. 尝试搭建Substrate节点
+
+Substrate Node是Substrate的区块链客户端。你可以在本地运行开发节点或配置新链并启动您自己的全局测试网。
+
+## 5.1 On Mac and Ubuntu
+
+为了尽可能快地开始，有一个简单的脚本可以安装所有必需的依赖项，并将Substrate安装到你的path中。只需打开一个终端并运行：
+``` shell
+	curl https://getsubstrate.io -sSf | bash
+```
+
+你可以通过运行**substrate --dev**来启动本地Substrate开发链。
+
+要创建自己的全局网络/加密货币，你需要创建一个新的Substrate节点链规范文件("chainspec")。
+
+首先让我们得到一个可以编辑的模板chainspec文件。 我们将使用“staging”链，这是节点预先配置的一种默认链：
+``` shell
+	substrate build-spec --chain=staging > ~/chainspec.json
+```
+
+现在，在编辑器中编辑〜/ chainspec.json。 每个模块都有很多单独的字段，还有一个非常大的字段包含此链的WebAssembly代码blob。 要编辑的最简单的字段是块周期。 将其更改为10（秒）：
+``` json
+     "timestamp": {
+        "minimumPeriod": 10
+      },
+```
+
+现在有了这个新的chainspec文件，您可以为新链构建一个“原始”链定义：
+``` shell
+	substrate build-spec --chain ~/chainspec.json --raw > ~/mychain.json
+```
+
+这可以输入Substrate：
+``` shell
+	substrate --chain ~/mychain.json
+```
+
+在你开始生成块之前它不会做太多，所以要做到这一点，你需要使用--validator选项以及为配置为初始权限的帐户传递种子：
+``` shell
+	substrate --chain ~/mychain.json --validator
+```
+
+你可以分发**mychain.json**，以便每个人都可以同步并（根据您的权限列表）验证你的链。
+
+
+
